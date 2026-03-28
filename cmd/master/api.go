@@ -5,6 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 	"ospnet/internal/master/config"
+	"ospnet/internal/master/db"
+	"ospnet/internal/master/features/node"
+	"ospnet/internal/master/features/onboard"
 	"ospnet/pkg/res"
 	"time"
 
@@ -40,9 +43,14 @@ func (app *application) mount() http.Handler {
 		}, "OK")
 	})
 
+	db := db.New(app.db)
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, app.config.FrontendURL, http.StatusTemporaryRedirect)
 	})
+
+	r.Mount("/api/onboard", onboard.Routes(db, *app.config))
+	r.Mount("/api/nodes", node.Routes(db, *app.config))
 
 	return r
 }

@@ -1,9 +1,8 @@
-package onboard
+package node
 
 import (
 	"ospnet/internal/master/config"
 	"ospnet/internal/master/db"
-	"ospnet/internal/master/tailscale"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -11,12 +10,10 @@ import (
 func Routes(db db.Querier, cfg config.Config) *chi.Mux {
 	r := chi.NewRouter()
 
-	ts := tailscale.NewClient(cfg.TsAuthKey, cfg.TailnetID)
-
-	service := NewService(db, cfg, ts)
+	service := NewService(db)
 	handler := NewHandler(service)
 
-	r.Post("/token", handler.CreateToken)
-	r.Post("/register", handler.RegisterNode)
+	r.Get("/", handler.ListNodes)
+	r.Post("/heartbeat", handler.Heartbeat)
 	return r
 }

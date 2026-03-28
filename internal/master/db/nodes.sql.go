@@ -41,7 +41,7 @@ type CreateNodeParams struct {
 }
 
 func (q *Queries) CreateNode(ctx context.Context, arg CreateNodeParams) error {
-	_, err := q.db.ExecContext(ctx, createNode,
+	_, err := q.db.Exec(ctx, createNode,
 		arg.ID,
 		arg.Name,
 		arg.Hostname,
@@ -63,7 +63,7 @@ WHERE id = ?
 `
 
 func (q *Queries) DeleteNode(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteNode, id)
+	_, err := q.db.Exec(ctx, deleteNode, id)
 	return err
 }
 
@@ -74,7 +74,7 @@ WHERE id = ?
 `
 
 func (q *Queries) GetNodeByID(ctx context.Context, id string) (Node, error) {
-	row := q.db.QueryRowContext(ctx, getNodeByID, id)
+	row := q.db.QueryRow(ctx, getNodeByID, id)
 	var i Node
 	err := row.Scan(
 		&i.ID,
@@ -101,7 +101,7 @@ FROM nodes
 `
 
 func (q *Queries) GetNodes(ctx context.Context) ([]Node, error) {
-	rows, err := q.db.QueryContext(ctx, getNodes)
+	rows, err := q.db.Query(ctx, getNodes)
 	if err != nil {
 		return nil, err
 	}
@@ -129,9 +129,6 @@ func (q *Queries) GetNodes(ctx context.Context) ([]Node, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -146,7 +143,7 @@ WHERE id = ?
 `
 
 func (q *Queries) MarkNodeUnhealthy(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, markNodeUnhealthy, id)
+	_, err := q.db.Exec(ctx, markNodeUnhealthy, id)
 	return err
 }
 
@@ -159,7 +156,7 @@ WHERE id = ?
 `
 
 func (q *Queries) UpdateHeartbeat(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, updateHeartbeat, id)
+	_, err := q.db.Exec(ctx, updateHeartbeat, id)
 	return err
 }
 
@@ -176,6 +173,6 @@ type UpdateNodeIPParams struct {
 }
 
 func (q *Queries) UpdateNodeIP(ctx context.Context, arg UpdateNodeIPParams) error {
-	_, err := q.db.ExecContext(ctx, updateNodeIP, arg.Ip, arg.ID)
+	_, err := q.db.Exec(ctx, updateNodeIP, arg.Ip, arg.ID)
 	return err
 }

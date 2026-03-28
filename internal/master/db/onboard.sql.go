@@ -23,7 +23,7 @@ type CreateTokenParams struct {
 }
 
 func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) error {
-	_, err := q.db.ExecContext(ctx, createToken, arg.Token, arg.ExpiresAt)
+	_, err := q.db.Exec(ctx, createToken, arg.Token, arg.ExpiresAt)
 	return err
 }
 
@@ -33,7 +33,7 @@ WHERE expires_at < CURRENT_TIMESTAMP
 `
 
 func (q *Queries) DeleteExpiredTokens(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, deleteExpiredTokens)
+	_, err := q.db.Exec(ctx, deleteExpiredTokens)
 	return err
 }
 
@@ -44,7 +44,7 @@ WHERE token = ?
 `
 
 func (q *Queries) GetToken(ctx context.Context, token string) (OnboardingToken, error) {
-	row := q.db.QueryRowContext(ctx, getToken, token)
+	row := q.db.QueryRow(ctx, getToken, token)
 	var i OnboardingToken
 	err := row.Scan(
 		&i.Token,
@@ -64,7 +64,7 @@ WHERE token = ?
 `
 
 func (q *Queries) GetValidToken(ctx context.Context, token string) (OnboardingToken, error) {
-	row := q.db.QueryRowContext(ctx, getValidToken, token)
+	row := q.db.QueryRow(ctx, getValidToken, token)
 	var i OnboardingToken
 	err := row.Scan(
 		&i.Token,
@@ -82,6 +82,6 @@ WHERE token = ?
 `
 
 func (q *Queries) MarkTokenUsed(ctx context.Context, token string) error {
-	_, err := q.db.ExecContext(ctx, markTokenUsed, token)
+	_, err := q.db.Exec(ctx, markTokenUsed, token)
 	return err
 }
