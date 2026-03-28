@@ -6,6 +6,8 @@ type Config struct {
 	Port           string
 	DatabaseURL    string
 	BaseURL        string
+	TsAuthKey      string
+	TailnetID      string
 	FrontendURL    string
 	AllowedOrigins []string
 }
@@ -29,6 +31,8 @@ func Load() *Config {
 		DatabaseURL:    MustEnv("DATABASE_URL"),
 		BaseURL:        GetEnv("BASE_URL", "http://localhost:8000"),
 		FrontendURL:    GetEnv("FRONTEND_URL", "http://localhost:5173"),
+		TsAuthKey:      MustEnv("TS_AUTH_KEY"),
+		TailnetID:      MustEnv("TS_ID"),
 		AllowedOrigins: allowedCors,
 	}
 
